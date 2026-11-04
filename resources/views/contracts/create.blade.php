@@ -92,6 +92,7 @@
                     <div class="w-24" x-show="selectedScreens.includes('{{ $screen->id }}')">
                         <label class="text-[10px] text-gray-500">Espacio Nº</label>
                         <input type="number" name="screens[{{ $loop->index }}][space_number]" min="1" max="{{ $screen->total_spaces }}" value="1"
+                               :disabled="!selectedScreens.includes('{{ $screen->id }}')"
                                class="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                     </div>
                 </label>

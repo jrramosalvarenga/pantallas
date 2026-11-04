@@ -72,6 +72,7 @@
 
             @php
             $navItems = [
+                ['route' => 'prospects', 'icon' => 'person_search', 'label' => 'Prospectos'],
                 ['route' => 'clients', 'icon' => 'groups', 'label' => 'Clientes'],
                 ['route' => 'contracts', 'icon' => 'description', 'label' => 'Contratos'],
                 ['route' => 'payments', 'icon' => 'payments', 'label' => 'Pagos'],

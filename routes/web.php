@@ -12,6 +12,8 @@ use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlanController;
+use App\Http\Controllers\ProspectController;
+use App\Http\Controllers\ProspectInteractionController;
 use App\Http\Controllers\ScreenController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +40,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('expenses', ExpenseController::class);
     Route::resource('incomes', IncomeController::class);
     Route::get('finances', [FinanceController::class, 'index'])->name('finances.index');
+    Route::resource('prospects', ProspectController::class);
+    Route::post('prospects/{prospect}/interactions', [ProspectInteractionController::class, 'store'])->name('prospects.interactions.store');
+    Route::delete('prospects/{prospect}/interactions/{interaction}', [ProspectInteractionController::class, 'destroy'])->name('prospects.interactions.destroy');
+
     Route::get('critical-path', [CriticalPathController::class, 'index'])->name('critical-path.index');
     Route::post('critical-path/{step}/update-status', [CriticalPathController::class, 'updateStatus'])->name('critical-path.update-status');
 });
