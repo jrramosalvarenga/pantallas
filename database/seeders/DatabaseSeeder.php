@@ -89,14 +89,14 @@ class DatabaseSeeder extends Seeder
         $arte = AdType::create([
             'name' => 'Arte Animado',
             'slug' => 'arte-animado',
-            'price_per_spot' => 2000.00,
+            'price_per_spot' => 1500.00,
             'description' => 'Arte animado con movimiento. Spot de 10 segundos.',
         ]);
 
         $video = AdType::create([
             'name' => 'Video',
             'slug' => 'video',
-            'price_per_spot' => 3000.00,
+            'price_per_spot' => 1500.00,
             'description' => 'Video publicitario con audio. Spot de 10 segundos.',
         ]);
 
@@ -118,7 +118,7 @@ class DatabaseSeeder extends Seeder
             'ad_type_id' => $arte->id,
             'screens_count' => 1,
             'discount_percent' => 0,
-            'final_price' => 2000.00,
+            'final_price' => 1500.00,
             'duration_months' => 1,
             'description' => '1 espacio de arte animado en 1 pantalla por mes.',
         ]);
@@ -129,7 +129,7 @@ class DatabaseSeeder extends Seeder
             'ad_type_id' => $video->id,
             'screens_count' => 1,
             'discount_percent' => 0,
-            'final_price' => 3000.00,
+            'final_price' => 1500.00,
             'duration_months' => 1,
             'description' => '1 espacio de video en 1 pantalla por mes.',
         ]);
@@ -140,10 +140,10 @@ class DatabaseSeeder extends Seeder
             'type' => 'combo',
             'ad_type_id' => $imagen->id,
             'screens_count' => 2,
-            'discount_percent' => 10.00,
-            'final_price' => 2700.00,
+            'discount_percent' => 16.67,
+            'final_price' => 2500.00,
             'duration_months' => 1,
-            'description' => '1 espacio en AMBAS pantallas. 10% de descuento. Ahorra L 300.',
+            'description' => '1 espacio en AMBAS pantallas. Ahorra L 500.',
         ]);
 
         Plan::create([
@@ -151,10 +151,10 @@ class DatabaseSeeder extends Seeder
             'type' => 'combo',
             'ad_type_id' => $arte->id,
             'screens_count' => 2,
-            'discount_percent' => 10.00,
-            'final_price' => 3600.00,
+            'discount_percent' => 16.67,
+            'final_price' => 2500.00,
             'duration_months' => 1,
-            'description' => '1 espacio en AMBAS pantallas. 10% de descuento. Ahorra L 400.',
+            'description' => '1 espacio en AMBAS pantallas. Ahorra L 500.',
         ]);
 
         Plan::create([
@@ -162,10 +162,10 @@ class DatabaseSeeder extends Seeder
             'type' => 'combo',
             'ad_type_id' => $video->id,
             'screens_count' => 2,
-            'discount_percent' => 10.00,
-            'final_price' => 5400.00,
+            'discount_percent' => 16.67,
+            'final_price' => 2500.00,
             'duration_months' => 1,
-            'description' => '1 espacio en AMBAS pantallas. 10% de descuento. Ahorra L 600.',
+            'description' => '1 espacio en AMBAS pantallas. Ahorra L 500.',
         ]);
 
         // ── Categorías de gastos ──

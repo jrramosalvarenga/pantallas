@@ -56,7 +56,13 @@
                 <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
             @endforeach
         </select>
-        @if(request()->hasAny(['search', 'status', 'priority', 'category']))
+        <select name="municipality" onchange="this.form.submit()" class="border border-gray-200 rounded-xl text-sm py-2.5 px-3 focus:ring-2 focus:ring-brand-500 outline-none">
+            <option value="">Municipio</option>
+            @foreach($municipalities as $mun)
+                <option value="{{ $mun->id }}" {{ request('municipality') == $mun->id ? 'selected' : '' }}>{{ $mun->name }}</option>
+            @endforeach
+        </select>
+        @if(request()->hasAny(['search', 'status', 'priority', 'category', 'municipality']))
             <a href="{{ route('prospects.index') }}" class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
                 <span class="material-symbols-outlined" style="font-size:16px">close</span> Limpiar
             </a>
@@ -147,6 +153,21 @@
                     </td>
                     <td class="px-5 py-4 text-right">
                         <div class="flex items-center justify-end gap-1">
+                            @if($prospect->phone)
+                            <a href="https://wa.me/504{{ preg_replace('/\D/', '', $prospect->phone) }}" target="_blank"
+                               class="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition" title="WhatsApp">
+                                <span class="material-symbols-outlined" style="font-size:18px">chat</span>
+                            </a>
+                            @endif
+                            @if(!$prospect->isConverted() && in_array($prospect->status, ['interesado', 'negociando', 'firmado']))
+                            <a href="{{ route('prospects.convert', $prospect) }}" class="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition" title="Convertir a cliente">
+                                <span class="material-symbols-outlined" style="font-size:18px">person_add</span>
+                            </a>
+                            @elseif($prospect->isConverted())
+                            <a href="{{ route('clients.show', $prospect->converted_to_client_id) }}" class="p-2 text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition" title="Ver cliente">
+                                <span class="material-symbols-outlined" style="font-size:18px">check_circle</span>
+                            </a>
+                            @endif
                             <a href="{{ route('prospects.show', $prospect) }}" class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition" title="Ver">
                                 <span class="material-symbols-outlined" style="font-size:18px">visibility</span>
                             </a>

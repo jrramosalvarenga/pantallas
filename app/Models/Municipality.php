@@ -18,4 +18,9 @@ class Municipality extends Model
     {
         return $this->hasMany(Client::class);
     }
+
+    public function prospects(): HasMany
+    {
+        return $this->hasMany(Prospect::class);
+    }
 }

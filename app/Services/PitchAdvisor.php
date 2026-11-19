@@ -18,12 +18,32 @@ class PitchAdvisor
         return [
             'tip' => 'Investiga el negocio antes de visitarlo. Adapta tu propuesta a sus necesidades específicas.',
             'approach' => 'Preséntate profesionalmente, muestra casos de éxito similares y ofrece una prueba o demo.',
-            'opening' => '¡Hola! Soy de Kontanos Publicidad. Notamos que su negocio tiene gran potencial para atraer más clientes con publicidad en pantallas LED.',
+            'opening' => '¡Hola! Soy de Publiktec. Notamos que su negocio tiene gran potencial para atraer más clientes con publicidad en pantallas LED.',
             'objections' => [
                 'Es muy caro' => 'Comparado con otros medios, nuestras pantallas tienen mayor impacto visual y costo por impresión más bajo.',
                 'No necesito publicidad' => 'Entiendo, pero sus competidores ya están invirtiendo en visibilidad. Le mostramos resultados reales.',
                 'Ya tengo mi publicidad' => 'Excelente, las pantallas LED complementan cualquier estrategia. Podemos hacer una prueba sin compromiso.',
             ],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function whatsappTemplates(string $businessName, string $category, ?string $contactName = null): array
+    {
+        $name = $contactName ? ", {$contactName}" : '';
+        $advice = self::getAdvice($category);
+
+        $promo = 'https://pantallas.kontanos.com/promo';
+        $footer = "--- *Se parte de los negocios que toda la ciudad ve.* ---\n\nCorreo: kontanospublicidad@zohomail.com\nWhatsApp: 8814-9290";
+
+        return [
+            'introduccion' => "{$promo}\n\nHola, buen dia{$name}, le saluda *Publiktec*.\n\nNos dedicamos a publicidad en *pantallas LED* en las principales calles de la ciudad.\n\nNotamos que *{$businessName}* tiene gran potencial para atraer mas clientes con este medio. {$advice['opening']}\n\nLe gustaria conocer nuestros planes y precios?\n\n{$footer}",
+            'seguimiento' => "{$promo}\n\nHola, buen dia{$name}, le saluda de nuevo *Publiktec*.\n\nLe escribo para dar seguimiento a nuestra conversacion sobre publicidad en pantallas LED para *{$businessName}*.\n\nHa tenido oportunidad de considerar nuestra propuesta? Con gusto le puedo ampliar la informacion o resolver cualquier duda.\n\n{$footer}",
+            'propuesta' => "{$promo}\n\nHola, buen dia{$name}, le saluda *Publiktec*. Le comparto informacion sobre nuestros servicios para *{$businessName}*:\n\n- *Pantallas LED* en ubicaciones de alto trafico\n- *168 reproducciones al dia* de tu anuncio\n- Ciclos de 5 minutos, de 6:00 a.m. a 8:00 p.m.\n- Diseno de arte incluido\n- Cambio de arte ilimitado\n- Inversion: *L 1,500/mes* por pantalla\n\nPara *{$businessName}* recomendamos un plan que maximice su visibilidad en la zona. Le gustaria agendar una reunion para mostrarle las opciones?\n\n{$footer}",
+            'promocion' => "{$promo}\n\nHola, buen dia{$name}, le saluda *Publiktec*.\n\nTenemos una promocion especial este mes para nuevos clientes.\n\nLe interesaria conocer los detalles para *{$businessName}*? Es una excelente oportunidad para empezar a verse en las calles principales.\n\n{$footer}",
+            'recordatorio' => "{$promo}\n\nHola, buen dia{$name}, le saluda *Publiktec*.\n\nRecuerde que tenemos espacios disponibles en nuestras pantallas LED. La visibilidad de *{$businessName}* puede multiplicarse.\n\nCuando seria un buen momento para platicar?\n\n{$footer}",
         ];
     }
 

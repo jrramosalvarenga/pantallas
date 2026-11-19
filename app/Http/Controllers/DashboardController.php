@@ -9,12 +9,15 @@ use App\Models\Income;
 use App\Models\Loan;
 use App\Models\Payment;
 use App\Models\Screen;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        if (auth()->user()->role === 'vendedor') {
+            return redirect()->route('prospects.index');
+        }
+
         $currentMonth = now()->month;
         $currentYear = now()->year;
 

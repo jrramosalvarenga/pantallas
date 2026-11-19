@@ -68,25 +68,30 @@
                 <span x-show="sidebarOpen">Dashboard</span>
             </a>
 
+            @php $userRole = auth()->user()->role; @endphp
+
             <p x-show="sidebarOpen" class="px-4 pt-4 pb-1 text-[10px] font-semibold text-brand-300 uppercase tracking-wider">Comercial</p>
 
             @php
             $navItems = [
-                ['route' => 'prospects', 'icon' => 'person_search', 'label' => 'Prospectos'],
-                ['route' => 'clients', 'icon' => 'groups', 'label' => 'Clientes'],
-                ['route' => 'contracts', 'icon' => 'description', 'label' => 'Contratos'],
-                ['route' => 'payments', 'icon' => 'payments', 'label' => 'Pagos'],
-                ['route' => 'plans', 'icon' => 'loyalty', 'label' => 'Planes'],
+                ['route' => 'prospects', 'icon' => 'person_search', 'label' => 'Prospectos', 'roles' => ['admin', 'vendedor']],
+                ['route' => 'clients', 'icon' => 'groups', 'label' => 'Clientes', 'roles' => ['admin', 'socia', 'operador']],
+                ['route' => 'contracts', 'icon' => 'description', 'label' => 'Contratos', 'roles' => ['admin', 'socia', 'operador']],
+                ['route' => 'payments', 'icon' => 'payments', 'label' => 'Pagos', 'roles' => ['admin', 'socia', 'operador']],
+                ['route' => 'plans', 'icon' => 'loyalty', 'label' => 'Planes', 'roles' => ['admin', 'socia', 'operador']],
             ];
             @endphp
             @foreach($navItems as $item)
-            <a href="{{ route($item['route'].'.index') }}"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs($item['route'].'.*') ? 'bg-white/20 text-white shadow-sm' : 'text-brand-100 hover:bg-white/10' }}">
-                <span class="material-symbols-outlined">{{ $item['icon'] }}</span>
-                <span x-show="sidebarOpen">{{ $item['label'] }}</span>
-            </a>
+                @if(in_array($userRole, $item['roles']))
+                <a href="{{ route($item['route'].'.index') }}"
+                   class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs($item['route'].'.*') ? 'bg-white/20 text-white shadow-sm' : 'text-brand-100 hover:bg-white/10' }}">
+                    <span class="material-symbols-outlined">{{ $item['icon'] }}</span>
+                    <span x-show="sidebarOpen">{{ $item['label'] }}</span>
+                </a>
+                @endif
             @endforeach
 
+            @if(in_array($userRole, ['admin', 'socia', 'operador']))
             <p x-show="sidebarOpen" class="px-4 pt-4 pb-1 text-[10px] font-semibold text-brand-300 uppercase tracking-wider">Operaciones</p>
 
             @php
@@ -123,11 +128,36 @@
 
             <p x-show="sidebarOpen" class="px-4 pt-4 pb-1 text-[10px] font-semibold text-brand-300 uppercase tracking-wider">Gestión</p>
 
+            <a href="{{ route('tasks.index') }}"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('tasks.*') ? 'bg-white/20 text-white shadow-sm' : 'text-brand-100 hover:bg-white/10' }}">
+                <span class="material-symbols-outlined">task_alt</span>
+                <span x-show="sidebarOpen">Tareas</span>
+            </a>
+
+            <a href="{{ route('events.index') }}"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('events.*') ? 'bg-white/20 text-white shadow-sm' : 'text-brand-100 hover:bg-white/10' }}">
+                <span class="material-symbols-outlined">celebration</span>
+                <span x-show="sidebarOpen">Eventos</span>
+            </a>
+
+            <a href="{{ route('calendar.index') }}"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('calendar.*') ? 'bg-white/20 text-white shadow-sm' : 'text-brand-100 hover:bg-white/10' }}">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span x-show="sidebarOpen">Calendario</span>
+            </a>
+
+            <a href="{{ route('accounting.index') }}"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('accounting.*') ? 'bg-white/20 text-white shadow-sm' : 'text-brand-100 hover:bg-white/10' }}">
+                <span class="material-symbols-outlined">account_balance_wallet</span>
+                <span x-show="sidebarOpen">Contabilidad</span>
+            </a>
+
             <a href="{{ route('critical-path.index') }}"
                class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('critical-path.*') ? 'bg-white/20 text-white shadow-sm' : 'text-brand-100 hover:bg-white/10' }}">
                 <span class="material-symbols-outlined">route</span>
                 <span x-show="sidebarOpen">Ruta Crítica</span>
             </a>
+            @endif
         </nav>
 
         {{-- Footer sidebar --}}

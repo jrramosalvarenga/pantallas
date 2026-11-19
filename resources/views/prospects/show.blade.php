@@ -53,9 +53,20 @@
                         </div>
                     </div>
                 </div>
-                <a href="{{ route('prospects.edit', $prospect) }}" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-brand-600 border border-gray-200 px-3 py-1.5 rounded-lg hover:border-brand-300 transition">
-                    <span class="material-symbols-outlined" style="font-size:16px">edit</span> Editar
-                </a>
+                <div class="flex items-center gap-2">
+                    @if(!$prospect->isConverted())
+                        <a href="{{ route('prospects.convert', $prospect) }}" class="inline-flex items-center gap-1 text-sm text-white bg-emerald-600 px-3 py-1.5 rounded-lg hover:bg-emerald-700 transition shadow-sm font-medium">
+                            <span class="material-symbols-outlined" style="font-size:16px">person_add</span> Convertir a Cliente
+                        </a>
+                    @else
+                        <a href="{{ route('clients.show', $prospect->converted_to_client_id) }}" class="inline-flex items-center gap-1 text-sm text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 hover:bg-emerald-100 transition font-medium">
+                            <span class="material-symbols-outlined" style="font-size:16px">check_circle</span> Ver Cliente
+                        </a>
+                    @endif
+                    <a href="{{ route('prospects.edit', $prospect) }}" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-brand-600 border border-gray-200 px-3 py-1.5 rounded-lg hover:border-brand-300 transition">
+                        <span class="material-symbols-outlined" style="font-size:16px">edit</span> Editar
+                    </a>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
@@ -126,6 +137,108 @@
                 <p class="text-sm text-gray-700 mt-1">{{ $prospect->notes }}</p>
             </div>
             @endif
+        </div>
+
+        {{-- Deal info card --}}
+        @if($prospect->deal_amount || $prospect->isConverted())
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-purple-600" style="font-size:22px">payments</span>
+                Negociación
+                @if($prospect->isConverted())
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 ml-2">
+                        <span class="material-symbols-outlined" style="font-size:14px">check</span> Convertido
+                    </span>
+                @endif
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                @if($prospect->deal_amount)
+                <div>
+                    <span class="text-gray-400">Valor</span>
+                    <p class="font-bold text-gray-800 text-lg">L. {{ number_format($prospect->deal_amount, 2) }}</p>
+                </div>
+                @endif
+                @if($prospect->payment_frequency)
+                <div>
+                    <span class="text-gray-400">Frecuencia de pago</span>
+                    <p class="font-medium text-gray-700">{{ \App\Models\Prospect::PAYMENT_FREQUENCIES[$prospect->payment_frequency] ?? $prospect->payment_frequency }}</p>
+                </div>
+                @endif
+                @if($prospect->payment_start_date)
+                <div>
+                    <span class="text-gray-400">Inicio de pagos</span>
+                    <p class="font-medium text-gray-700">{{ $prospect->payment_start_date->format('d/m/Y') }}</p>
+                </div>
+                @endif
+                @if($prospect->payment_end_date)
+                <div>
+                    <span class="text-gray-400">Fin de contrato</span>
+                    <p class="font-medium text-gray-700">{{ $prospect->payment_end_date->format('d/m/Y') }}</p>
+                </div>
+                @endif
+                @if($prospect->converted_at)
+                <div>
+                    <span class="text-gray-400">Fecha de conversión</span>
+                    <p class="font-medium text-gray-700">{{ $prospect->converted_at->format('d/m/Y H:i') }}</p>
+                </div>
+                @endif
+                @if($prospect->isConverted())
+                <div>
+                    <span class="text-gray-400">Cliente</span>
+                    <p class="font-medium">
+                        <a href="{{ route('clients.show', $prospect->converted_to_client_id) }}" class="text-brand-600 hover:text-brand-700">
+                            Ver ficha del cliente →
+                        </a>
+                    </p>
+                </div>
+                @endif
+            </div>
+        </div>
+        @endif
+
+        {{-- Video / Ad card --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-red-500" style="font-size:22px">videocam</span>
+                Anuncio / Video
+            </h3>
+
+            @if($prospect->ad_video_path)
+                <div class="mb-4">
+                    <video controls class="w-full rounded-xl border border-gray-200 max-h-64">
+                        <source src="{{ asset('storage/' . $prospect->ad_video_path) }}" type="video/mp4">
+                        Tu navegador no soporta la reproducción de video.
+                    </video>
+                    <div class="flex items-center justify-between mt-2">
+                        <p class="text-xs text-gray-500">{{ $prospect->ad_video_original_name ?? 'Video' }}</p>
+                        <form method="POST" action="{{ route('prospects.delete-video', $prospect) }}" onsubmit="return confirm('¿Eliminar este video?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="text-xs text-red-500 hover:text-red-700 flex items-center gap-1">
+                                <span class="material-symbols-outlined" style="font-size:14px">delete</span> Eliminar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @else
+                <div class="text-center py-6 mb-4">
+                    <span class="material-symbols-outlined text-gray-300" style="font-size:40px">video_file</span>
+                    <p class="text-sm text-gray-400 mt-2">Sin video cargado</p>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('prospects.upload-video', $prospect) }}" enctype="multipart/form-data" class="space-y-3">
+                @csrf
+                <input type="file" name="ad_video" accept="video/mp4,video/avi,video/mov,video/wmv,video/webm" required
+                       class="w-full border border-gray-200 rounded-xl text-sm py-2 px-4 focus:ring-2 focus:ring-brand-500 outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                <p class="text-xs text-gray-400">MP4, AVI, MOV, WMV, WebM. Máx. 100MB.</p>
+                @error('ad_video')
+                    <p class="text-xs text-red-500">{{ $message }}</p>
+                @enderror
+                <button type="submit" class="w-full bg-gray-800 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-900 transition shadow-sm flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined" style="font-size:18px">upload</span>
+                    Subir Video
+                </button>
+            </form>
         </div>
 
         {{-- Pitch advisor card --}}
@@ -274,6 +387,119 @@
             </div>
         </div>
 
+        {{-- WhatsApp messaging --}}
+        @if($prospect->phone && count($whatsappTemplates))
+        <div class="bg-white rounded-2xl shadow-sm border border-green-100 p-6" x-data="{
+            showCustom: false,
+            customMsg: '',
+            phone: '504{{ preg_replace('/\D/', '', $prospect->phone) }}',
+            templates: {{ Js::from($whatsappTemplates) }},
+            selectedTemplate: '',
+            sendTemplate(key) {
+                const msg = this.templates[key];
+                window.open('https://wa.me/' + this.phone + '?text=' + encodeURIComponent(msg), '_blank');
+            },
+            sendCustom() {
+                if (this.customMsg.trim()) {
+                    window.open('https://wa.me/' + this.phone + '?text=' + encodeURIComponent(this.customMsg), '_blank');
+                }
+            },
+            previewTemplate(key) {
+                this.selectedTemplate = key;
+                this.customMsg = this.templates[key];
+                this.showCustom = true;
+            }
+        }">
+            <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-green-600" style="font-size:18px">chat</span>
+                Enviar WhatsApp
+            </h4>
+
+            {{-- Promo images to send --}}
+            <div class="mb-4 p-3 bg-green-50/50 rounded-xl border border-green-100">
+                <p class="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                    <span class="material-symbols-outlined" style="font-size:14px">info</span>
+                    Envía primero las imágenes y luego el mensaje de texto
+                </p>
+                <div class="grid grid-cols-3 gap-2 mb-2">
+                    @foreach(['publiktec-promo.jpg', 'publiktec-promo-1.jpg', 'publiktec-promo-2.jpg'] as $img)
+                    <a href="{{ asset('storage/promo/' . $img) }}" download="{{ $img }}" class="block group relative">
+                        <img src="{{ asset('storage/promo/' . $img) }}" class="w-full aspect-square object-cover rounded-lg border border-green-200 group-hover:border-green-400 transition" alt="Promo">
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 rounded-lg flex items-center justify-center transition">
+                            <span class="material-symbols-outlined text-white opacity-0 group-hover:opacity-100 transition" style="font-size:20px">download</span>
+                        </div>
+                    </a>
+                    @endforeach
+                </div>
+                <a href="#" onclick="document.querySelectorAll('.promo-download').forEach(a => a.click()); return false;"
+                   class="w-full text-center px-3 py-2.5 text-xs font-semibold rounded-xl bg-green-600 text-white hover:bg-green-700 transition flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined" style="font-size:16px">download</span>
+                    Descargar todas las imágenes
+                </a>
+                @foreach(['publiktec-promo.jpg', 'publiktec-promo-1.jpg', 'publiktec-promo-2.jpg'] as $img)
+                <a href="{{ asset('storage/promo/' . $img) }}" download="{{ $img }}" class="promo-download hidden"></a>
+                @endforeach
+            </div>
+
+            {{-- Template buttons --}}
+            <div class="space-y-2 mb-4">
+                <button @click="sendTemplate('introduccion')" class="w-full text-left px-3 py-2.5 text-xs font-medium rounded-xl border border-green-100 hover:bg-green-50 text-green-700 transition flex items-center gap-2">
+                    <span class="material-symbols-outlined" style="font-size:16px">waving_hand</span>
+                    Mensaje de introducción
+                </button>
+                <button @click="sendTemplate('seguimiento')" class="w-full text-left px-3 py-2.5 text-xs font-medium rounded-xl border border-green-100 hover:bg-green-50 text-green-700 transition flex items-center gap-2">
+                    <span class="material-symbols-outlined" style="font-size:16px">replay</span>
+                    Seguimiento
+                </button>
+                <button @click="sendTemplate('propuesta')" class="w-full text-left px-3 py-2.5 text-xs font-medium rounded-xl border border-green-100 hover:bg-green-50 text-green-700 transition flex items-center gap-2">
+                    <span class="material-symbols-outlined" style="font-size:16px">description</span>
+                    Propuesta de servicios
+                </button>
+                <button @click="sendTemplate('promocion')" class="w-full text-left px-3 py-2.5 text-xs font-medium rounded-xl border border-green-100 hover:bg-green-50 text-green-700 transition flex items-center gap-2">
+                    <span class="material-symbols-outlined" style="font-size:16px">local_offer</span>
+                    Promoción especial
+                </button>
+                <button @click="sendTemplate('recordatorio')" class="w-full text-left px-3 py-2.5 text-xs font-medium rounded-xl border border-green-100 hover:bg-green-50 text-green-700 transition flex items-center gap-2">
+                    <span class="material-symbols-outlined" style="font-size:16px">notifications</span>
+                    Recordatorio
+                </button>
+            </div>
+
+            {{-- Preview / Edit before sending --}}
+            <div class="border-t border-gray-100 pt-3">
+                <button @click="showCustom = !showCustom; if(!customMsg) customMsg = templates['introduccion']" class="text-xs text-gray-500 hover:text-brand-600 flex items-center gap-1 mb-2">
+                    <span class="material-symbols-outlined" style="font-size:14px" x-text="showCustom ? 'expand_less' : 'edit_note'"></span>
+                    <span x-text="showCustom ? 'Ocultar editor' : 'Personalizar mensaje'"></span>
+                </button>
+                <div x-show="showCustom" x-transition class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Usar plantilla como base</label>
+                        <select @change="if($event.target.value) customMsg = templates[$event.target.value]" class="w-full border border-gray-200 rounded-xl text-xs py-2 px-3 focus:ring-2 focus:ring-green-500 outline-none">
+                            <option value="">— Elegir plantilla —</option>
+                            <option value="introduccion">Introducción</option>
+                            <option value="seguimiento">Seguimiento</option>
+                            <option value="propuesta">Propuesta</option>
+                            <option value="promocion">Promoción</option>
+                            <option value="recordatorio">Recordatorio</option>
+                        </select>
+                    </div>
+                    <textarea x-model="customMsg" rows="6"
+                              class="w-full border border-gray-200 rounded-xl text-xs py-2.5 px-3 focus:ring-2 focus:ring-green-500 outline-none resize-none leading-relaxed"></textarea>
+                    <button @click="sendCustom()" class="w-full bg-green-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-green-700 transition shadow-sm flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined" style="font-size:18px">send</span>
+                        Enviar por WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+        @elseif(!$prospect->phone)
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center">
+            <span class="material-symbols-outlined text-gray-300" style="font-size:32px">chat</span>
+            <p class="text-xs text-gray-400 mt-2">Agrega un teléfono para habilitar WhatsApp</p>
+            <a href="{{ route('prospects.edit', $prospect) }}" class="text-xs text-brand-600 hover:text-brand-700 font-medium">Editar prospecto</a>
+        </div>
+        @endif
+
         {{-- New interaction form --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h4 class="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2">
@@ -325,6 +551,33 @@
                 </button>
             </form>
         </div>
+
+        {{-- Convert to client --}}
+        @if(!$prospect->isConverted())
+        <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl shadow-sm border border-emerald-200/60 p-6">
+            <h4 class="text-sm font-bold text-emerald-700 mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined" style="font-size:18px">trending_up</span>
+                Convertir a Cliente
+            </h4>
+            <p class="text-xs text-emerald-600 mb-4">Convierte este prospecto en cliente, define el valor de la negociación y genera el contrato automáticamente.</p>
+            <a href="{{ route('prospects.convert', $prospect) }}" class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition shadow-sm">
+                <span class="material-symbols-outlined" style="font-size:18px">person_add</span>
+                Convertir a Cliente
+            </a>
+        </div>
+        @else
+        <div class="bg-emerald-50 rounded-2xl shadow-sm border border-emerald-200/60 p-6">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-emerald-600" style="font-size:20px">check_circle</span>
+                <h4 class="text-sm font-bold text-emerald-700">Cliente convertido</h4>
+            </div>
+            <p class="text-xs text-emerald-600 mb-3">Convertido el {{ $prospect->converted_at->format('d/m/Y') }}</p>
+            <a href="{{ route('clients.show', $prospect->converted_to_client_id) }}" class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition shadow-sm">
+                <span class="material-symbols-outlined" style="font-size:18px">visibility</span>
+                Ver ficha del Cliente
+            </a>
+        </div>
+        @endif
 
         {{-- Delete --}}
         <div class="bg-white rounded-2xl shadow-sm border border-red-100 p-6">
