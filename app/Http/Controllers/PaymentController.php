@@ -11,11 +11,11 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
         $payments = Payment::with('client', 'contract')
-            ->when($request->status, fn($q, $s) => $q->where('status', $s))
-            ->when($request->from, fn($q, $d) => $q->where('due_date', '>=', $d))
-            ->when($request->to, fn($q, $d) => $q->where('due_date', '<=', $d))
-            ->when($request->search, fn($q, $s) => $q->whereHas('client', fn($c) => $c->where('business_name', 'like', "%{$s}%")))
-            ->orderByRaw("FIELD(status, 'vencido', 'pendiente', 'parcial', 'pagado')")
+            ->when($request->status, fn ($q, $s) => $q->where('status', $s))
+            ->when($request->from, fn ($q, $d) => $q->where('due_date', '>=', $d))
+            ->when($request->to, fn ($q, $d) => $q->where('due_date', '<=', $d))
+            ->when($request->search, fn ($q, $s) => $q->whereHas('client', fn ($c) => $c->where('business_name', 'ilike', "%{$s}%")))
+            ->orderByRaw("CASE status WHEN 'vencido' THEN 1 WHEN 'pendiente' THEN 2 WHEN 'parcial' THEN 3 WHEN 'pagado' THEN 4 ELSE 5 END")
             ->orderBy('due_date')
             ->paginate(20);
 
@@ -34,12 +34,14 @@ class PaymentController extends Controller
     public function show(Payment $payment)
     {
         $payment->load('client', 'contract.plan');
+
         return view('payments.show', compact('payment'));
     }
 
     public function edit(Payment $payment)
     {
         $payment->load('client', 'contract');
+
         return view('payments.edit', compact('payment'));
     }
 
@@ -82,19 +84,20 @@ class PaymentController extends Controller
             'contract_id' => $payment->contract_id,
             'payment_id' => $payment->id,
             'client_id' => $payment->client_id,
-            'description' => 'Pago de contrato ' . ($payment->contract->contract_number ?? ''),
+            'description' => 'Pago de contrato '.($payment->contract->contract_number ?? ''),
             'amount' => $validated['amount_paid'],
             'date' => now(),
             'reference' => $validated['reference'],
         ]);
 
         return redirect()->route('payments.index')
-            ->with('success', 'Pago registrado por L ' . number_format($validated['amount_paid'], 2));
+            ->with('success', 'Pago registrado por L '.number_format($validated['amount_paid'], 2));
     }
 
     public function destroy(Payment $payment)
     {
         $payment->delete();
+
         return redirect()->route('payments.index')
             ->with('success', 'Pago eliminado.');
     }

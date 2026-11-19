@@ -110,6 +110,10 @@
                         <span class="inline-block text-[10px] font-semibold px-2.5 py-1 rounded-full bg-{{ $pc }}-50 text-{{ $pc }}-600">{{ $label }}</span>
                     </td>
                     <td class="px-5 py-3 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                        <a href="{{ route('payments.edit', $payment) }}" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition">
+                            Editar
+                        </a>
                         @if($payment->status !== 'pagado')
                         <div x-data="{ showModal: false }">
                             <button @click="showModal = true" class="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-xs font-medium hover:bg-emerald-100 transition">
@@ -158,6 +162,7 @@
                             <span class="material-symbols-outlined text-emerald-500" style="font-size:16px">check</span>
                         </span>
                         @endif
+                        </div>
                     </td>
                 </tr>
                 @empty
