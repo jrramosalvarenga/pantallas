@@ -14,7 +14,7 @@ class PaymentController extends Controller
             ->when($request->status, fn ($q, $s) => $q->where('status', $s))
             ->when($request->from, fn ($q, $d) => $q->where('due_date', '>=', $d))
             ->when($request->to, fn ($q, $d) => $q->where('due_date', '<=', $d))
-            ->when($request->search, fn ($q, $s) => $q->whereHas('client', fn ($c) => $c->where('business_name', 'ilike', "%{$s}%")))
+            ->when($request->search, fn ($q, $s) => $q->whereHas('client', fn ($c) => $c->whereRaw('LOWER(business_name) LIKE ?', ['%'.strtolower($s).'%'])))
             ->orderByRaw("CASE status WHEN 'vencido' THEN 1 WHEN 'pendiente' THEN 2 WHEN 'parcial' THEN 3 WHEN 'pagado' THEN 4 ELSE 5 END")
             ->orderBy('due_date')
             ->paginate(20);
