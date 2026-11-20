@@ -96,8 +96,8 @@
                 $label = $isOverdue ? 'Vencido' : ucfirst($payment->status);
                 @endphp
                 <tr class="hover:bg-gray-50/50 transition {{ $isOverdue ? 'bg-red-50/30' : '' }}">
-                    <td class="px-5 py-3 font-medium text-gray-800">{{ $payment->client->business_name ?? '—' }}</td>
-                    <td class="px-5 py-3 text-gray-500 font-mono text-xs">{{ $payment->contract->contract_number ?? '—' }}</td>
+                    <td class="px-5 py-3 font-medium text-gray-800">{{ $payment->client?->business_name ?? '—' }}</td>
+                    <td class="px-5 py-3 text-gray-500 font-mono text-xs">{{ $payment->contract?->contract_number ?? '—' }}</td>
                     <td class="px-5 py-3 text-gray-600">
                         {{ $payment->due_date->format('d/m/Y') }}
                         @if($isOverdue)
@@ -124,7 +124,7 @@
                                     <form method="POST" action="{{ route('payments.register', $payment) }}" class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl" @click.stop>
                                         @csrf
                                         <h4 class="text-base font-semibold text-gray-800 mb-1">Registrar Pago</h4>
-                                        <p class="text-sm text-gray-400 mb-4">{{ $payment->client->business_name ?? '' }} — Vence {{ $payment->due_date->format('d/m/Y') }}</p>
+                                        <p class="text-sm text-gray-400 mb-4">{{ $payment->client?->business_name ?? '' }} — Vence {{ $payment->due_date->format('d/m/Y') }}</p>
                                         <div class="space-y-4">
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700 mb-1">Monto *</label>

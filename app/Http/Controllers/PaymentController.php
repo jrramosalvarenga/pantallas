@@ -84,7 +84,7 @@ class PaymentController extends Controller
             'contract_id' => $payment->contract_id,
             'payment_id' => $payment->id,
             'client_id' => $payment->client_id,
-            'description' => 'Pago de contrato '.($payment->contract->contract_number ?? ''),
+            'description' => 'Pago de contrato '.($payment->contract?->contract_number ?? ''),
             'amount' => $validated['amount_paid'],
             'date' => now(),
             'reference' => $validated['reference'],

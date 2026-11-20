@@ -2,7 +2,7 @@
 
 @section('title', 'Editar Pago')
 @section('page-title', 'Editar Pago')
-@section('page-subtitle', $payment->client->business_name ?? 'Pago')
+@section('page-subtitle', $payment->client?->business_name ?? 'Pago')
 
 @section('content')
 <div class="max-w-2xl">
@@ -18,8 +18,8 @@
                 <span class="material-symbols-outlined" style="font-size:22px">edit_calendar</span>
             </div>
             <div>
-                <h3 class="text-base font-bold text-gray-800">{{ $payment->client->business_name ?? '—' }}</h3>
-                <p class="text-xs text-gray-400">Contrato {{ $payment->contract->contract_number ?? '—' }}</p>
+                <h3 class="text-base font-bold text-gray-800">{{ $payment->client?->business_name ?? '—' }}</h3>
+                <p class="text-xs text-gray-400">Contrato {{ $payment->contract?->contract_number ?? '—' }}</p>
             </div>
         </div>
 
