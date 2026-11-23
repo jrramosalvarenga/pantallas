@@ -296,7 +296,6 @@ class ProspectController extends Controller
     {
         $start = $contract->start_date->copy();
         $end = $contract->end_date->copy();
-        $amount = $contract->monthly_amount;
 
         $dates = [];
         $current = $start->copy();
@@ -315,15 +314,15 @@ class ProspectController extends Controller
             $dates = [$start->copy()];
         }
 
-        $paymentAmount = count($dates) > 0
-            ? round($contract->total_amount / count($dates), 2)
-            : $contract->total_amount;
+        $contract->update([
+            'total_amount' => round($contract->monthly_amount * count($dates), 2),
+        ]);
 
         foreach ($dates as $date) {
             Payment::create([
                 'contract_id' => $contract->id,
                 'client_id' => $contract->client_id,
-                'amount' => $paymentAmount,
+                'amount' => $contract->monthly_amount,
                 'due_date' => $date,
                 'status' => 'pendiente',
             ]);
