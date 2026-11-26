@@ -26,19 +26,21 @@ class ProspectSeeder extends Seeder
                 $municipalityId = $municipalities[$munName];
             }
 
-            Prospect::create([
-                'business_name' => $data['business_name'],
-                'category' => $data['category'] ?? null,
-                'municipality_id' => $municipalityId,
-                'phone' => $data['phone'] ?? null,
-                'address' => $data['address'] ?? null,
-                'contact_name' => $data['contact'] ?? null,
-                'origin' => $data['origin'] ?? null,
-                'data_source' => $data['data_source'] ?? null,
-                'nearby_screen' => $data['nearby_screen'] ?? null,
-                'notes' => $data['notes'] ?? null,
-                'status' => 'por_visitar',
-            ]);
+            Prospect::firstOrCreate(
+                ['business_name' => $data['business_name']],
+                [
+                    'category' => $data['category'] ?? null,
+                    'municipality_id' => $municipalityId,
+                    'phone' => $data['phone'] ?? null,
+                    'address' => $data['address'] ?? null,
+                    'contact_name' => $data['contact'] ?? null,
+                    'origin' => $data['origin'] ?? null,
+                    'data_source' => $data['data_source'] ?? null,
+                    'nearby_screen' => $data['nearby_screen'] ?? null,
+                    'notes' => $data['notes'] ?? null,
+                    'status' => 'por_visitar',
+                ]
+            );
         }
     }
 
